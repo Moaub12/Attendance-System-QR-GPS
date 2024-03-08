@@ -1,0 +1,91 @@
+<?php
+
+namespace App\Filament\Resources;
+
+use App\Filament\Resources\StudentResource\Pages;
+use App\Filament\Resources\StudentResource\RelationManagers;
+use App\Models\Student;
+use Filament\Forms;
+use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Forms\Form;
+use Filament\Resources\Resource;
+use Filament\Tables;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
+
+class StudentResource extends Resource
+{
+    protected static ?string $model = Student::class;
+
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    public static function form(Form $form): Form
+    {
+        return $form
+            ->schema([
+                TextInput::make('file_number')->required(),
+                DatePicker::make('dob')->required(),
+                Select::make('user_id')
+                ->relationship('user', 'name')
+                ->nullable(),
+                Select::make('department_id')
+                ->relationship('departement', 'name')
+                ->nullable(),
+                Select::make('year_id')
+                ->relationship('year', 'name')
+                ->nullable(),
+                FileUpload::make('image')
+                    ->disk('public')->directory('images/students')
+                    ->image()
+                    ->label(__('Image')),
+                // Components\FileUpload::make('image')->required(),
+                // Components\BelongsToSelect::make('user_id')->relationship('user', 'name')->nullable(),
+            ]);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('user.name'),
+                TextColumn::make('file_number')->sortable()->searchable()->label(__('File Number')),
+                TextColumn::make('dob')->sortable()->searchable()->label(__('Date of Birth')),
+                ImageColumn::make('image')->label(__('Image')),
+                TextColumn::make('year.name'),
+                TextColumn::make('departement.name'),
+            ])
+            ->filters([
+                //
+            ])
+            ->actions([
+                Tables\Actions\EditAction::make(),
+            ])
+            ->bulkActions([
+                Tables\Actions\BulkActionGroup::make([
+                    Tables\Actions\DeleteBulkAction::make(),
+                ]),
+            ]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => Pages\ListStudents::route('/'),
+            'create' => Pages\CreateStudent::route('/create'),
+            'edit' => Pages\EditStudent::route('/{record}/edit'),
+        ];
+    }
+}
