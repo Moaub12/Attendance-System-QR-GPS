@@ -2,15 +2,11 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\AttendanceResource\Pages;
-use App\Filament\Resources\AttendanceResource\RelationManagers;
-use App\Models\Attendance;
-use App\Models\Course;
-use App\Models\Student;
+use App\Filament\Resources\SemesterResource\Pages;
+use App\Filament\Resources\SemesterResource\RelationManagers;
+use App\Models\Semester;
 use Filament\Forms;
-use Filament\Forms\Components\BelongsToSelect;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -19,9 +15,9 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class AttendanceResource extends Resource
+class SemesterResource extends Resource
 {
-    protected static ?string $model = Attendance::class;
+    protected static ?string $model = Semester::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -29,12 +25,7 @@ class AttendanceResource extends Resource
     {
         return $form
             ->schema([
-                Select::make('student_id')
-                    ->options(Student::get()->pluck('user.name', 'id')),
-                Select::make('course_id')
-                    ->options(Course::get()->pluck('name', 'id')),
-                DateTimePicker::make('date_time'),
-
+                TextInput::make('name'),
             ]);
     }
 
@@ -42,12 +33,9 @@ class AttendanceResource extends Resource
     {
         return $table
             ->columns([
+TextColumn::make('name'),
 
-
-                TextColumn::make('student.user.name')->label('Student'),
-                TextColumn::make('course.name'),
-                TextColumn::make('date_time'),
-            ])
+])
             ->filters([
                 //
             ])
@@ -71,9 +59,9 @@ class AttendanceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListAttendances::route('/'),
-            'create' => Pages\CreateAttendance::route('/create'),
-            'edit' => Pages\EditAttendance::route('/{record}/edit'),
+            'index' => Pages\ListSemesters::route('/'),
+            'create' => Pages\CreateSemester::route('/create'),
+            'edit' => Pages\EditSemester::route('/{record}/edit'),
         ];
     }
 }

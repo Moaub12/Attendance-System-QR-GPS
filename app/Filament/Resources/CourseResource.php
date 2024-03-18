@@ -28,14 +28,16 @@ class CourseResource extends Resource
         return $form
             ->schema([
                 TextInput::make('name')->required(),
-                DatePicker::make('year')->required(),
                 TextInput::make('code')->required(),
                 Select::make('department_id')
                 ->relationship('departement', 'name')
-                ->nullable(),
+                ->required(),
+                Select::make('semester_id')
+                ->relationship('semester', 'name')
+               ->required(),
                 Select::make('year_id')
                 ->relationship('year', 'name')
-                ->nullable(),
+                ->required(),
 
             ]);
     }
@@ -45,11 +47,10 @@ class CourseResource extends Resource
         return $table
             ->columns([
             TextColumn::make('name'),
-            TextColumn::make('year'),
             TextColumn::make('code'),
-            TextColumn::make('year.name'),
+            TextColumn::make('Year.name'),
             TextColumn::make('departement.name'),
-
+            TextColumn::make('semester.name'),
             ])
             ->filters([
                 //

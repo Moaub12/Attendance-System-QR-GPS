@@ -33,13 +33,16 @@ class StudentResource extends Resource
                 DatePicker::make('dob')->required(),
                 Select::make('user_id')
                 ->relationship('user', 'name')
-                ->nullable(),
+               ->required(),
                 Select::make('department_id')
                 ->relationship('departement', 'name')
-                ->nullable(),
+               ->required(),
                 Select::make('year_id')
                 ->relationship('year', 'name')
-                ->nullable(),
+               ->required(),
+               Select::make('semester_id')
+               ->relationship('semester', 'name')
+              ->required(),
                 FileUpload::make('image')
                     ->disk('public')->directory('images/students')
                     ->image()
@@ -59,6 +62,7 @@ class StudentResource extends Resource
                 ImageColumn::make('image')->label(__('Image')),
                 TextColumn::make('year.name'),
                 TextColumn::make('departement.name'),
+                TextColumn::make('semester.name'),
             ])
             ->filters([
                 //

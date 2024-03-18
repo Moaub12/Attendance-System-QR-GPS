@@ -11,15 +11,14 @@ class Student extends Model
     protected $fillable = [
         'file_number', 'dob', 'image', 'user_id', 'year_id',
         'departement_id',
+        'semester_id',
+
     ];
     public function user()
     {
         return $this->belongsTo(User::class);
     }
-    public function courses()
-    {
-        return $this->belongsToMany(Course::class, 'student_professors');
-    }
+   
     public function year()
     {
         return $this->belongsTo(Year::class);
@@ -28,4 +27,12 @@ class Student extends Model
     {
         return $this->belongsTo(Departement::class);
     }
+    public function semester()
+    {
+        return $this->belongsTo(Semester::class);
+    }
+    // public function courses()
+    // {
+    //     return $this->belongsToMany(Student::class);
+    // }
 }
