@@ -44,9 +44,9 @@ class AttendanceResource extends Resource
             ->columns([
 
 
-                TextColumn::make('student.user.name')->label('Student'),
-                TextColumn::make('course.name'),
-                TextColumn::make('date_time'),
+                TextColumn::make('student.user.name')->label('Student')->searchable()->sortable(),
+                TextColumn::make('course.name')->searchable()->sortable(),
+                TextColumn::make('date_time')->searchable()->sortable(),
             ])
             ->filters([
                 //

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\AttendanceResource\Pages;
 
 use App\Filament\Resources\AttendanceResource;
+use App\Filament\Widgets\AttendancesChart;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -14,6 +15,12 @@ class ListAttendances extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+    protected function getFooterWidgets(): array
+    {
+        return [
+        AttendancesChart::class,
         ];
     }
 }
