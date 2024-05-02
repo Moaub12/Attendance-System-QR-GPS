@@ -13,4 +13,5 @@ class QrGen extends Controller
         $qr_text= $record->id . ',' . now()->format('Y-m-d');
         return view('qr', compact('qr_text'));
 
-    }}
+    }
+}

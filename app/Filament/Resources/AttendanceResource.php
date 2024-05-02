@@ -15,6 +15,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -49,7 +50,11 @@ class AttendanceResource extends Resource
                 TextColumn::make('date_time')->searchable()->sortable(),
             ])
             ->filters([
-                //
+                SelectFilter::make('course_id')->options(Course::get()->pluck('name', 'id'))->label('course'),
+                // SelectFilter::make('date_time')
+                // ->options(Attendance::distinct()->get('date_time')->pluck('date_time', 'date_time')->toArray())
+                
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
