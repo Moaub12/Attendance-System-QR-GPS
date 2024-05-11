@@ -11,7 +11,7 @@ class QrGen extends Controller
     {
         $userTimezone = 'Asia/Beirut';
         date_default_timezone_set($userTimezone);
-        $qr_text= $record->id . ',' . now()->format('Y-m-d');
+        $qr_text= $record->id . ',' . now();
         return view('qr', compact('qr_text'));
 
     }
