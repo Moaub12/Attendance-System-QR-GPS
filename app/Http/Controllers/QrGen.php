@@ -9,7 +9,8 @@ class QrGen extends Controller
 {
     public function generateqr(Course $record)
     {
-        
+        $userTimezone = 'Asia/Beirut';
+        date_default_timezone_set($userTimezone);
         $qr_text= $record->id . ',' . now()->format('Y-m-d');
         return view('qr', compact('qr_text'));
 
