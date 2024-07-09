@@ -31,9 +31,9 @@ class Auth extends Controller
            
 
             return response()->json([
-                'response' => [
+                'data' => [
                     'session_id' => $authToken,
-                    'uid' => $user->id,
+                    'user_id' => $user->id,
                 ],
                 'message' => 'login complete'
             ], Response::HTTP_OK);

@@ -24,7 +24,40 @@ class StudentResource extends Resource
     protected static ?string $model = Student::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    public static function getEloquentQuery(): Builder
+    {
+        $user = auth()->user();
+    
+        if ($user->hasRole('super_admin')) {
+            return parent::getEloquentQuery();
+        }
+    
+        // Check if the user is a professor
+        if ($user->professor) {
+            // Get the IDs of the courses the professor teaches
+            $courseIds = $user->professor->courses()->pluck('courses.id');
+            
+            // Filter the students who are enrolled in the same year, department, and semester as the courses the professor teaches
+            return Student::whereHas('year', function ($query) use ($courseIds) {
+                $query->whereIn('years.id', function ($query) use ($courseIds) {
+                    $query->select('year_id')->from('courses')->whereIn('courses.id', $courseIds);
+                });
+            })->whereHas('departement', function ($query) use ($courseIds) {
+                $query->whereIn('departements.id', function ($query) use ($courseIds) {
+                    $query->select('departement_id')->from('courses')->whereIn('courses.id', $courseIds);
+                });
+            })->whereHas('semester', function ($query) use ($courseIds) {
+                $query->whereIn('semesters.id', function ($query) use ($courseIds) {
+                    $query->select('semester_id')->from('courses')->whereIn('courses.id', $courseIds);
+                });
+            });
+        }
+    
+        // If the user is neither a super admin nor a professor, return no students
+        return parent::getEloquentQuery()->whereRaw('1 = 0');
+    }
+    
+    
     public static function form(Form $form): Form
     {
         return $form
@@ -34,7 +67,7 @@ class StudentResource extends Resource
                 Select::make('user_id')
                 ->relationship('user', 'name')
                ->required(),
-                Select::make('department_id')
+                Select::make('departement_id')
                 ->relationship('departement', 'name')
                ->required(),
                 Select::make('year_id')

@@ -24,7 +24,7 @@ class ProfessorResource extends Resource
     protected static ?string $model = Professor::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+  
     public static function form(Form $form): Form
     {
         return $form
@@ -38,7 +38,12 @@ class ProfessorResource extends Resource
                     ->disk('public')->directory('images/students')
                     ->image()
                     ->label(__('Image')),
+                    Select::make('courses_id')
+                    ->relationship('courses', 'name')
+                    ->multiple(true)
+                    ->required(),
             ]);
+
     }
 
     public static function table(Table $table): Table
@@ -46,6 +51,7 @@ class ProfessorResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('user.name'),
+                TextColumn::make('user.email'),
                 TextColumn::make('file_number')->sortable()->searchable()->label(__('File Number')),
                 TextColumn::make('dob')->sortable()->searchable()->label(__('Date of Birth')),
                 ImageColumn::make('image')->label(__('Image')),

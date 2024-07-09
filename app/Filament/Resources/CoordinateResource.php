@@ -2,23 +2,26 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Models\User;
+use App\Filament\Resources\CoordinateResource\Pages;
+use App\Filament\Resources\CoordinateResource\RelationManagers;
+use App\Forms\Components\Coordinates;
+use App\Models\Coordinate;
 use Filament\Forms;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
-class UserResource extends Resource
+class CoordinateResource extends Resource
 {
-    protected static ?string $model = User::class;
+    protected static ?string $model = Coordinate::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -26,15 +29,11 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                TextInput::make('name')->label(__('Name'))->required(),
-                TextInput::make('email')->label(__('Email'))->required()->email(),
-                TextInput::make('password')->label(__('Password'))->required()->password()->visibleOn('create'),
-                Select::make('roles')
-                ->relationship('roles', 'name')
-                ->multiple()
-                ->preload()
-                ->searchable()
-                // DateTimePicker::make('email_verified_at')->label(__('Email Verified At')),
+                TextInput::make('name')->required(),
+                Section::make('')->schema([Placeholder::make('Please Create Coordinate to place location ')->translateLabel()])->visibleOn('create'),
+
+                Section::make('')->schema([Coordinates::make('latt_long')->label('Coordinates')->translateLabel()->visibleOn('edit'),]),
+                
             ]);
     }
 
@@ -42,8 +41,9 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('name')->label(__('Name'))->sortable()->searchable(),
-                TextColumn::make('email')->label(__('Email'))->sortable()->searchable(),
+             TextColumn::make('name'),
+             TextColumn::make('longitude'),
+             TextColumn::make('latitude'),
             ])
             ->filters([
                 //
@@ -68,9 +68,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ListCoordinates::route('/'),
+            'create' => Pages\CreateCoordinate::route('/create'),
+            'edit' => Pages\EditCoordinate::route('/{record}/edit'),
         ];
     }
 }

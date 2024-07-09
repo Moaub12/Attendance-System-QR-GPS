@@ -27,6 +27,10 @@ return [
         'enabled' => true,
         'name' => 'panel_user',
     ],
+    'professor'=>[
+     'name' => 'professor',
+     'enabled'=>true,
+    ],
 
     'permission_prefixes' => [
         'resource' => [

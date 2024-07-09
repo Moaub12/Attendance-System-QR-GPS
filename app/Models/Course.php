@@ -22,7 +22,7 @@ class Course extends Model
 
     public function professors()
     {
-        return $this->belongsToMany(Professor::class);
+        return $this->belongsToMany(Professor::class,'course_professors');
     }
     public function Year()
     {

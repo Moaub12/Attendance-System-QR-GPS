@@ -23,22 +23,42 @@ class CourseResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    public static function getEloquentQuery(): Builder
+    {
+        $user = auth()->user();
+    
+        if ($user->hasRole('super_admin')) {
+            return parent::getEloquentQuery();
+        }
+    
+        // Check if the user is a professor
+        if ($user->professor) {
+            // Filter the courses by the professor's ID
+            return parent::getEloquentQuery()->whereHas('professors', function (Builder $query) use ($user) {
+                $query->where('professor_id', $user->professor->id);
+            });
+        }
+    
+        // If the user is neither a super admin nor a professor, return no courses
+        return parent::getEloquentQuery()->whereRaw('1 = 0');
+    }
+    
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 TextInput::make('name')->required(),
                 TextInput::make('code')->required(),
-                Select::make('department_id')
-                ->relationship('departement', 'name')
-                ->required(),
+                Select::make('departement_id')
+                    ->relationship('departement', 'name')
+                    ->required(),
                 Select::make('semester_id')
-                ->relationship('semester', 'name')
-               ->required(),
+                    ->relationship('semester', 'name')
+                    ->required(),
                 Select::make('year_id')
-                ->relationship('year', 'name')
-                ->required(),
-
+                    ->relationship('year', 'name')
+                    ->required(),
             ]);
     }
 
@@ -46,11 +66,11 @@ class CourseResource extends Resource
     {
         return $table
             ->columns([
-            TextColumn::make('name'),
-            TextColumn::make('code'),
-            TextColumn::make('Year.name'),
-            TextColumn::make('departement.name'),
-            TextColumn::make('semester.name'),
+                TextColumn::make('name'),
+                TextColumn::make('code'),
+                TextColumn::make('year.name'),
+                TextColumn::make('departement.name'),
+                TextColumn::make('semester.name'),
             ])
             ->filters([
                 //
@@ -58,13 +78,12 @@ class CourseResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('Generate QR Code')
-                ->url(fn(Course $record):string => route('gen.qr', ['record' => $record->id]))
-                ->openUrlInNewTab()
+                    ->url(fn(Course $record): string => route('gen.qr', ['record' => $record->id]))
+                    ->openUrlInNewTab()
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
-
                 ]),
             ]);
     }

@@ -78,7 +78,16 @@ class DatabaseSeeder extends Seeder
             'code' => 'MATH102',
             'semester_id' => 1,
         ],
-            // Add more years as needed
+            
+        ]);  
+        DB::table('coordinates')->insert([
+            ['name' => 'Faculty of Engineering',
+            'longitude' =>'35.830935642066',
+            'latitude' =>'34.416466568299'],
+            ['name' => 'Home',
+            'longitude' =>'35.79423151642871',
+            'latitude' =>'34.37180323570666']
         ]);
+
     }
 }

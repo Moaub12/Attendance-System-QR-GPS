@@ -25,7 +25,29 @@ class AttendanceResource extends Resource
     protected static ?string $model = Attendance::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getEloquentQuery(): Builder
+    {
+        $user = auth()->user();
+        
+        if ($user->hasRole('super_admin')) {
+            return parent::getEloquentQuery();
+        }
 
+        // Check if the user is a professor
+        if ($user->professor) {
+            // Get the IDs of the courses the professor teaches
+            $courseIds = $user->professor->courses()->pluck('courses.id');
+            
+            // Filter attendance records by the professor's courses
+            return parent::getEloquentQuery()->whereHas('course', function (Builder $query) use ($courseIds) {
+                $query->whereIn('courses.id', $courseIds);
+            });
+        }
+
+        // If the user is neither a super admin nor a professor, return no records
+        return parent::getEloquentQuery()->whereRaw('1 = 0');
+    }
+     
     public static function form(Form $form): Form
     {
         return $form
@@ -50,8 +72,23 @@ class AttendanceResource extends Resource
                 TextColumn::make('date_time')->searchable()->sortable(),
             ])
             ->filters([
-                SelectFilter::make('course_id')->options(Course::get()->pluck('name', 'id'))->label('course'),
-                // SelectFilter::make('date_time')
+                SelectFilter::make('course_id')
+                ->label('Course')
+                ->options(function () {
+                    $user = auth()->user();
+
+                    if ($user->hasRole('super_admin')) {
+                        return Course::all()->pluck('name', 'id');
+                    }
+
+                    if ($user->professor) {
+                        // Get the courses the professor teaches
+                        $courses = $user->professor->courses()->pluck('name', 'courses.id');
+                        return $courses;
+                    }
+
+                    return [];
+                }),                // SelectFilter::make('date_time')
                 // ->options(Attendance::distinct()->get('date_time')->pluck('date_time', 'date_time')->toArray())
                 
 
