@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Api\Qr;
+use App\Http\Controllers\Api\Std;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,3 +22,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 Route::post('getScannedInfo', [Qr::class, 'getScannedInfo']);
 Route::post('login', [Auth::class, 'login'])->name('login');
+Route::get('/user/{user_id}/courses-attendance', [Std::class, 'getCoursesAndAttendanceCount']);
